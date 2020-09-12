@@ -9,7 +9,7 @@ go build cmd/apiserver/main.go
 # Final stage
 FROM alpine:3.12
 LABEL Author="Artur Kryukov <artur@kryukov.biz>"
-EXPOSE 
+EXPOSE 8080
 WORKDIR /kubetest2
 COPY --from=build-env /go/src/kubetest2/main /kubetest2
 ENTRYPOINT /kubetest2/main
