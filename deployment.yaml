@@ -10,7 +10,7 @@ spec:
   type: NodePort
   ports:
     - name: metrics
-      nodePort: 31313
+      nodePort: 31312
       port: 8080
       protocol: TCP
       targetPort: 8080
