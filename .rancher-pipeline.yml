@@ -1,0 +1,15 @@
+stages:
+- name: BUILD
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./Dockerfile
+      buildContext: .
+      tag: bigkaa/kubetest2:0.01
+      pushRemote: true
+      registry: index.docker.io
+- name: DEP
+  steps:
+  - applyYamlConfig:
+      path: ./deployment.yaml
+timeout: 60
+notification: {}
