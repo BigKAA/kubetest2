@@ -33,6 +33,7 @@ func (s *APIServer) Start() error {
 	s.logger.Info("Starting API server")
 	s.ConfigRouter()
 	s.logger.Info("Listen on: http://" + s.config.BindAddr)
+
 	return http.ListenAndServe(s.config.BindAddr, s.router)
 }
 

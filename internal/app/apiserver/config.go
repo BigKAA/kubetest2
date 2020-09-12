@@ -11,18 +11,18 @@ type Config struct {
 // NewConfig получает конфигурационные параметры из среды окружения.
 // если переменной среды окружения нет, подставляет значения по умолчанию.
 func NewConfig() *Config {
-	bindAddr, exists := os.LookupEnv("BIND_ADDR")
-	if !exists {
-		bindAddr = "127.0.0.1:8080"
-	}
-
-	logLevel, exists := os.LookupEnv("DEFAULT_LOG_LEVEL")
-	if !exists {
-		logLevel = "debug"
-	}
 
 	return &Config{
-		BindAddr: bindAddr,
-		LogLevel: logLevel,
+		BindAddr: getEnv("BIND_ADDR", "127.0.0.1:8080"),
+		LogLevel: getEnv("DEFAULT_LOG_LEVEL", "debug"),
 	}
+}
+
+// Simple helper function to read an environment or return a default value
+func getEnv(key string, defaultVal string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+
+	return defaultVal
 }
