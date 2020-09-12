@@ -1,9 +1,9 @@
 package apiserver
 
 import (
-	"io"
 	"net/http"
 
+	"github.com/felixge/httpsnoop"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
@@ -29,12 +29,16 @@ func (s *APIServer) Start() error {
 	if err := s.ConfigLogger(); err != nil {
 		return err
 	}
-
-	s.logger.Info("Starting API server")
 	s.ConfigRouter()
-	s.logger.Info("Listen on: http://" + s.config.BindAddr)
+	s.logger.Info("Starting API server Listen on: http://", s.config.BindAddr)
 
-	return http.ListenAndServe(s.config.BindAddr, s.router)
+	server := &http.Server{
+		Addr:    s.config.BindAddr,
+		Handler: s.logRequestHandler(s.router),
+		// ErrorLog: s.logger,
+	}
+
+	return server.ListenAndServe()
 }
 
 // ConfigLogger конфигурация логгера
@@ -52,12 +56,23 @@ func (s *APIServer) ConfigLogger() error {
 
 // ConfigRouter конфигурирует роутер
 func (s *APIServer) ConfigRouter() {
-	s.router.HandleFunc("/hello", s.HandlerHello())
+	pods := s.router.PathPrefix("/pods").Subrouter()
+	pods.HandleFunc("/", s.HandlerPods())
+	pods.HandleFunc("/{ns}", s.HandlerPods())
 }
 
-// HandlerHello ...
-func (s *APIServer) HandlerHello() http.HandlerFunc {
+// logRequestHandler логирует запросы
+func (s *APIServer) logRequestHandler(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Hello")
+		m := httpsnoop.CaptureMetrics(h, w, r)
+		s.logger.WithFields(logrus.Fields{
+			"method":         r.Method,
+			"remote_address": r.RemoteAddr,
+			"request_uri":    r.RequestURI,
+			"user_agent":     r.UserAgent(),
+			"status":         m.Code,
+			"bytes":          m.Written,
+			"duration":       m.Duration,
+		}).Info("request")
 	}
 }
