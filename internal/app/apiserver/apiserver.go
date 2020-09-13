@@ -1,18 +1,24 @@
 package apiserver
 
 import (
+	"flag"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/felixge/httpsnoop"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 // APIServer собственно сервер
 type APIServer struct {
-	config *Config
-	logger *logrus.Logger
-	router *mux.Router
+	config   *Config
+	logger   *logrus.Logger
+	router   *mux.Router
+	restconf *rest.Config // для доступа к API кластера кубернетес
 }
 
 // New создаёт экземпляр сервера
@@ -30,6 +36,7 @@ func (s *APIServer) Start() error {
 		return err
 	}
 	s.ConfigRouter()
+	s.ConfigRest()
 	s.logger.Info("Starting API server Listen on: http://", s.config.BindAddr)
 
 	server := &http.Server{
@@ -39,6 +46,58 @@ func (s *APIServer) Start() error {
 	}
 
 	return server.ListenAndServe()
+}
+
+// ConfigRest Конфигурация подключения к rest API кластера
+func (s *APIServer) ConfigRest() error {
+	// сначал надо понять находимся ли мы внутри кластера
+	// для этого проконтролируем наличеие файа
+	// /var/run/secrets/kubernetes.io/serviceaccount/token
+	if fileExists("/var/run/secrets/kubernetes.io/serviceaccount/token") {
+		// внутри кластера
+		conf, err := rest.InClusterConfig()
+		if err != nil {
+			s.logger.Error("Can't config connection to API. ", err)
+			return err
+		}
+		s.restconf = conf
+	} else {
+		// не в кластере
+		// По умолчанию ищет конфигурационный файл в домашней директории .kube
+		// Или укажите полный путь к config файлу в командной строке
+		var kubeconfig *string
+		if home := homeDir(); home != "" {
+			kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+		} else {
+			kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		}
+		flag.Parse()
+
+		// use the current context in kubeconfig
+		conf, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+		if err != nil {
+			s.logger.Error(err)
+		}
+		s.restconf = conf
+	}
+	return nil
+}
+
+// homeDir ...
+func homeDir() string {
+	if h := os.Getenv("HOME"); h != "" {
+		return h
+	}
+	return os.Getenv("USERPROFILE") // windows
+}
+
+// fileExists Проверяет есть ли такой файл
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
 
 // ConfigLogger конфигурация логгера
