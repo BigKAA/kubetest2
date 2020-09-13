@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"context"
+	"html/template"
 	"io"
 	"net/http"
 
@@ -33,11 +34,18 @@ func (s *APIServer) HandlerPods() http.HandlerFunc {
 				return
 			}
 			body := "Pods </br>"
-			for _, pod := range pods.Items {
-				body += " " + pod.GetName()
-			}
 
-			io.WriteString(w, body)
+			a := make([]string, pods.Size())
+			for i, pod := range pods.Items {
+				a[i] = pod.GetName()
+			}
+			data := {
+				Namespace: vars["ns"],
+				Pods: a,
+			}
+			templ, _ := template.Parse("templates/pods.html")
+			templ.Execute(w, data)
+			// io.WriteString(w, body)
 		}
 
 	}
