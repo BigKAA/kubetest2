@@ -13,7 +13,7 @@ type Config struct {
 func NewConfig() *Config {
 
 	return &Config{
-		BindAddr: getEnv("CLUSTER_ADDRESS", "127.0.0.1:8080"),
+		BindAddr: getEnv("BIND_ADDR", "127.0.0.1:8080"),
 		LogLevel: getEnv("DEFAULT_LOG_LEVEL", "debug"),
 	}
 }
