@@ -35,6 +35,7 @@ spec:
       labels:
         app: kubetest2
     spec:
+      # serviceAccountName: kubetest-account
       containers:
         - name: kubetest
           image: bigkaa/kubetest2:0.01
