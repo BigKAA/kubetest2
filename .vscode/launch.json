@@ -9,12 +9,10 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "host": "127.0.0.1",
-            "port": 2345,
             "program": "${workspaceFolder}/cmd/apiserver/main.go",
             "env": {"BIND_ADDR":"127.0.0.1:8080",
                     "DEFAULT_LOG_LEVEL":"debug"},
-            "args": ["-kubeconfig", "config"]
+            "args": []
         }
     ]
 }

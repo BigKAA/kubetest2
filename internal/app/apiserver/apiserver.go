@@ -36,6 +36,7 @@ func (s *APIServer) Start() error {
 		return err
 	}
 	s.ConfigRouter()
+	s.ConfigRest()
 	s.logger.Info("Starting API server Listen on: http://", s.config.BindAddr)
 
 	server := &http.Server{
@@ -62,6 +63,8 @@ func (s *APIServer) ConfigRest() error {
 		s.restconf = conf
 	} else {
 		// не в кластере
+		// По умолчанию ищет конфигурационный файл в домашней директории .kube
+		// Или укажите полный путь к config файлу в командной строке
 		var kubeconfig *string
 		if home := homeDir(); home != "" {
 			kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
