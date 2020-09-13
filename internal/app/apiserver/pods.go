@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -16,20 +17,22 @@ func (s *APIServer) HandlerPods() http.HandlerFunc {
 		if r.RequestURI == "/pods/" {
 			io.WriteString(w, "Pods help ")
 		} else {
-			//vars := mux.Vars(r)
+			vars := mux.Vars(r)
 
 			clientset, err := kubernetes.NewForConfig(s.restconf)
 			if err != nil {
 				s.logger.Error("NewForConfig", err)
-				// return nil
+				io.WriteString(w, "can't find config file")
+				return
 			}
 
-			pods, err := clientset.CoreV1().Pods("kubetest").List(context.TODO(), metav1.ListOptions{})
+			pods, err := clientset.CoreV1().Pods(vars["ns"]).List(context.TODO(), metav1.ListOptions{})
 			if err != nil {
 				s.logger.Error("Pod list", err)
-				// return nil
+				io.WriteString(w, "can't read pods in namespace: "+vars["ns"])
+				return
 			}
-			var body string
+			body := "Pods </br>"
 			for _, pod := range pods.Items {
 				body += " " + pod.GetName()
 			}
