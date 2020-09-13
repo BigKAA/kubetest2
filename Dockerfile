@@ -12,5 +12,6 @@ LABEL Author="Artur Kryukov <artur@kryukov.biz>"
 EXPOSE 8080
 WORKDIR /kubetest2
 ADD templates templates
+ADD .env ./
 COPY --from=build-env /go/src/kubetest2/main /kubetest2
 ENTRYPOINT /kubetest2/main
