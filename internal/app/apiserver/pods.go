@@ -44,13 +44,12 @@ func (s *APIServer) HandlerPods() http.HandlerFunc {
 			for i, pod := range pods.Items {
 				a[i] = pod.GetName()
 			}
-			data := PodsData{
+
+			templ, _ := template.ParseFiles("templates/pods.html")
+			templ.Execute(w, PodsData{
 				Namespace: vars["ns"],
 				Pods:      a,
-			}
-			templ, _ := template.ParseFiles("templates/pods.html")
-			templ.Execute(w, data)
-			// io.WriteString(w, body)
+			})
 		}
 
 	}
