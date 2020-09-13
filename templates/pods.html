@@ -2,14 +2,15 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{{ .Title}}</title>
+    <title>{{ .Namespace}}</title>
 </head>
 <body>
-    <h2>Неймспейс: {{ .namespace }}</h2>
+    <h2>Неймспейс: {{ .Namespace }}</h2>
+    <p>Поды:</p>
     <ul>
-        {{range .Pods}}
+        {{ range .Pods }}
         <li>{{ . }}</li>
-        {{end}}
+        {{ end }}
     </ul>
 </body>
 </html>

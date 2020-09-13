@@ -11,6 +11,12 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+// PodsData ...
+type PodsData struct {
+	Namespace string
+	Pods      []string
+}
+
 // HandlerPods ...
 func (s *APIServer) HandlerPods() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -33,17 +39,16 @@ func (s *APIServer) HandlerPods() http.HandlerFunc {
 				io.WriteString(w, "can't read pods in namespace: "+vars["ns"])
 				return
 			}
-			body := "Pods </br>"
 
-			a := make([]string, pods.Size())
+			a := make([]string, len(pods.Items))
 			for i, pod := range pods.Items {
 				a[i] = pod.GetName()
 			}
-			data := {
+			data := PodsData{
 				Namespace: vars["ns"],
-				Pods: a,
+				Pods:      a,
 			}
-			templ, _ := template.Parse("templates/pods.html")
+			templ, _ := template.ParseFiles("templates/pods.html")
 			templ.Execute(w, data)
 			// io.WriteString(w, body)
 		}
