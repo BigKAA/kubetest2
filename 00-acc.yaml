@@ -8,7 +8,7 @@ metadata:
   namespace: kubetest
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   labels:
     app: kubetest
@@ -29,7 +29,7 @@ rules:
       - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   labels:
     app: kubetest
@@ -37,7 +37,7 @@ metadata:
   namespace: kubetest
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: kubetest-role
 subjects:
   - kind: ServiceAccount
