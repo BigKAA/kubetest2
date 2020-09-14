@@ -115,8 +115,9 @@ func (s *APIServer) ConfigLogger() error {
 
 // ConfigRouter конфигурирует роутер
 func (s *APIServer) ConfigRouter() {
+	s.router.HandleFunc("/", s.HandlerRoot())
 	pods := s.router.PathPrefix("/pods").Subrouter()
-	pods.HandleFunc("/", s.HandlerPods())
+	pods.HandleFunc("/", s.HandlerRoot())
 	pods.HandleFunc("/{ns}", s.HandlerPods())
 }
 
