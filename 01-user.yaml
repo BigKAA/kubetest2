@@ -1,0 +1,39 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: kubetest # namespace к которому применяются огранияения
+  name: artur-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "replicationcontrollers"]
+  verbs: ["create", "get", "update", "list", "delete"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+- apiGroups: ["apps"]
+  resources: ["deployments","daemonsets","replicasets","statefulsets"]
+  verbs: ["create", "get", "update", "patch", "list", "delete", "deploy"]
+- apiGroups: ["autoscaling"]
+  resources: ["horizontalpodautoscalers"]
+  verbs: ["create", "get", "update", "list", "delete"]
+- apiGroups: ["batch"]
+  resources: ["jobs","cronjobs"]
+  verbs: ["create", "get", "update", "list", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: RoleBinding
+metadata:
+ name: artur-rb
+ namespace: kubetest
+subjects: 
+- kind: User
+  name: artur
+  apiGroup: rbac.authorization.k8s.io 
+roleRef:
+ kind: Role
+ name: artur-role
+ apiGroup: rbac.authorization.k8s.io
