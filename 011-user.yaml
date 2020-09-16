@@ -1,0 +1,24 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: kubetest # namespace к которому применяются огранияения
+  name: artur-role-1
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: RoleBinding
+metadata:
+ name: artur-rb
+ namespace: kubetest
+subjects: 
+- kind: User
+  name: artur
+  apiGroup: rbac.authorization.k8s.io 
+roleRef:
+ kind: Role
+ name: artur-role-1
+ apiGroup: rbac.authorization.k8s.io
