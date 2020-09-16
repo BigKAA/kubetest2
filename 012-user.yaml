@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: kubetest # namespace к которому применяются огранияения
-  name: artur-role-2
+  name: artur-role-1
 rules:
 - apiGroups: [""]
   resources: ["pods", "services", "replicationcontrollers"]
@@ -35,5 +35,5 @@ subjects:
   apiGroup: rbac.authorization.k8s.io 
 roleRef:
  kind: Role
- name: artur-role-2
+ name: artur-role-1
  apiGroup: rbac.authorization.k8s.io
