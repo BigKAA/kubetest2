@@ -4,6 +4,7 @@ pipeline {
         stage ('test') {
             steps {
                 sh 'echo "Helo world"'
+                sh 'biuld id: ${BUILD_ID}'
             }
         }
     }
