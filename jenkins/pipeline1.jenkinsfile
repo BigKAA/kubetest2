@@ -1,13 +1,15 @@
 pipeline {
-    agent {
-        docker { image 'node:14-alpine' }
-    }
+    agent any
     stages {
         stage ('test') {
             steps {
                 sh 'echo "Helo world"'
                 sh 'echo "biuld id: ${BUILD_ID}"'
                 sh 'node --version'
+                docker.image('gcr.io/kaniko-project/executor:debug-v0.16.0').insede{
+                    git branch: 'EDIT', credentialsId: 'gitHubBigKAA', url: 'https://github.com/BigKAA/kubetest2'
+                    sh 'ls -l' 
+                }
             }
         }
     }
