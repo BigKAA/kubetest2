@@ -16,6 +16,7 @@ spec:
       targetPort: 8080
   selector:
     app: kubetest2
+
 ---
 apiVersion: apps/v1
 kind: Deployment

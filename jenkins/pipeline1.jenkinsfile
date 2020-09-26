@@ -29,6 +29,10 @@ spec:
 """
     }
   }
+  options {
+    timestamps()
+    ansiColor("xterm")
+  }
   stages {
     stage('BUILD') {
        
@@ -39,6 +43,13 @@ spec:
 /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=bigkaa/kubetest2:v0.01.$BUILD_NUMBER
             '''
         }
+      }
+    }
+
+    stage('DEPLOY'){
+      steps{
+        sh "sed \"s/TAG/$BUILD_NUMBER/g\" deployment/deployment.template > deployment/01-deployment.yaml"
+        sh "cat deployment/01-deployment.yaml"
       }
     }
   }
