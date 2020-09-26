@@ -34,17 +34,17 @@ spec:
     ansiColor("xterm")
   }
   stages {
-    stage('BUILD') {
+//     stage('BUILD') {
        
-      steps {
-        // git branch: 'EDIT', credentialsId: 'gitHubBigKAA', url: 'https://github.com/BigKAA/kubetest2'
-        container(name: 'kaniko') {
-            sh '''
-/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=bigkaa/kubetest2:v0.01.$BUILD_NUMBER
-            '''
-        }
-      }
-    }
+//       steps {
+//         // git branch: 'EDIT', credentialsId: 'gitHubBigKAA', url: 'https://github.com/BigKAA/kubetest2'
+//         container(name: 'kaniko') {
+//             sh '''
+// /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=bigkaa/kubetest2:v0.01.$BUILD_NUMBER
+//             '''
+//         }
+//       }
+//     }
 
     stage('DEPLOY'){
       steps{
