@@ -49,6 +49,7 @@ spec:
       steps{
         sh "sed \"s/TAG/$BUILD_NUMBER/g\" deployment/deployment.template > deployment/01-deployment.yaml"
         sh "cat deployment/01-deployment.yaml"
+        sh "git rev-parse HEAD"
       }
     }
   }
