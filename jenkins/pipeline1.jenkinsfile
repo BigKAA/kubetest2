@@ -31,7 +31,6 @@ spec:
   }
   options {
     timestamps()
-    ansiColor("xterm")
   }
   stages {
 //     stage('BUILD') {
