@@ -1,4 +1,7 @@
 pipeline {
+  environment {
+    PATH = "$PATH:/home/jenkins/agent/workspace/kubetest2/bin"
+  }
   agent {
     kubernetes {
       //cloud 'kubernetes'

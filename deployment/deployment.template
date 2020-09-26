@@ -39,7 +39,7 @@ spec:
       serviceAccountName: kubetest-account
       containers:
         - name: kubetest
-          image: bigkaa/kubetest2:TAG
+          image: bigkaa/kubetest2:0.01.TAG
           imagePullPolicy: Always
           env:
             - name: BIND_ADDR
