@@ -1,11 +1,7 @@
 pipeline {
-  environment {
-    PATH = "$PATH:/home/jenkins/agent/workspace/kubetest2/bin"
-  }
-  agent {
-    kubernetes {
-      //cloud 'kubernetes'
-      yaml """
+    agent {
+        kubernetes {
+            yaml """
 kind: Pod
 metadata:
   name: kaniko
@@ -30,28 +26,32 @@ spec:
             - key: .dockerconfigjson
               path: config.json
 """
+        }
     }
-  }
 
-  stages {
-//     stage('BUILD') {
-       
-//       steps {
-//         // git branch: 'EDIT', credentialsId: 'gitHubBigKAA', url: 'https://github.com/BigKAA/kubetest2'
-//         container(name: 'kaniko') {
-//             sh '''
-// /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=bigkaa/kubetest2:v0.01.$BUILD_NUMBER
-//             '''
-//         }
-//       }
-//     }
+    stages {
+        
+        stage('GIT') {
+            steps {
+                git branch: 'EDIT', credentialsId: 'gitHubBigKAA', url: 'https://github.com/BigKAA/kubetest2'
+            }
+        }
 
-    stage('DEPLOY'){
-      steps{
-        sh "sed \"s/TAG/$BUILD_NUMBER/g\" deployment/deployment.template > deployment/01-deployment.yaml"
-        sh "cat deployment/01-deployment.yaml"
-        sh "git rev-parse HEAD"
-      }
+        stage('BUILD') {
+            steps {
+                container(name: 'kaniko') {
+                    sh '''
+/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=bigkaa/kubetest2:v0.01.$BUILD_NUMBER
+                    '''
+                }
+            }
+        }
+
+        stage('DEPLOY') {
+            steps {
+              kubernetesDeploy configs: 'deployment/00-acc.yaml', kubeConfig: [path: ''], kubeconfigId: 'cube-conf-admin', secretName: '', ssh: [sshCredentialsId: '*', sshServer: ''], textCredentials: [certificateAuthorityData: '', clientCertificateData: '', clientKeyData: '', serverUrl: 'https://']
+              kubernetesDeploy configs: 'deployment/01-deployment.yaml', kubeConfig: [path: ''], kubeconfigId: 'cube-conf-admin', secretName: '', ssh: [sshCredentialsId: '*', sshServer: ''], textCredentials: [certificateAuthorityData: '', clientCertificateData: '', clientKeyData: '', serverUrl: 'https://']
+            }
+        }
     }
-  }
 }
