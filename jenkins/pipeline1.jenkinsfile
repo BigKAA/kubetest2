@@ -30,7 +30,7 @@ spec:
     }
 
     stages {
-        
+        // Удалить если pipeline script from SCM
         stage('GIT') {
             steps {
                 git branch: 'EDIT', credentialsId: 'gitHubBigKAA', url: 'https://github.com/BigKAA/kubetest2'
