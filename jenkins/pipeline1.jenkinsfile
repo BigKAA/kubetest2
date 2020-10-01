@@ -21,7 +21,7 @@ spec:
     projected:
       sources:
       - secret:
-          name: docker-secret
+          name: kryukov-local
           items:
             - key: .dockerconfigjson
               path: config.json
