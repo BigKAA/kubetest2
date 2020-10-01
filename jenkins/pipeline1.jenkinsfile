@@ -21,7 +21,7 @@ spec:
     projected:
       sources:
       - secret:
-          name: kryukov-local
+          name: for-kaniko
           items:
             - key: .dockerconfigjson
               path: config.json
