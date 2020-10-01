@@ -21,7 +21,7 @@ spec:
     projected:
       sources:
       - secret:
-          name: for-kaniko
+          name: kryukov-local
           items:
             - key: .dockerconfigjson
               path: config.json
@@ -41,7 +41,7 @@ spec:
             steps {
                 container(name: 'kaniko') {
                     sh '''
-/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=bigkaa/kubetest2:v0.01.$BUILD_NUMBER
+/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=n.kryukov.local/bigkaa/kubetest2:v0.01.$BUILD_NUMBER
                     '''
                 }
             }
